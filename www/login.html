@@ -13,7 +13,6 @@
         position: relative;
         background-color: #fcfcfc;
     }
-
     #center {
         width: 100%;
         height: 600px;
@@ -24,7 +23,6 @@
         margin: auto 0;
         position: absolute;
     }
-
     #title {
         color: white;
         text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px #e3fafb;
@@ -35,7 +33,6 @@
         height: 45px;
         display: block;
     }
-
     #left {
         width: 50%;
         height: 600px;
@@ -43,7 +40,6 @@
         /* text-align:center; */
         position: relative;
     }
-
     #left_content {
         width: 480px;
         height: 350px;
@@ -53,7 +49,6 @@
         margin: auto;
         position: absolute;
     }
-
     #slogan {
         margin: 1px;
         display: block;
@@ -61,7 +56,6 @@
         font-size: 20px;
         color: dimgray;
     }
-
     #left_top {
         width: 400px;
         height: 150px;
@@ -70,7 +64,6 @@
         right: 0;
         margin: auto;
     }
-
     #left_bottom {
         width: 450px;
         height: 50px;
@@ -78,7 +71,6 @@
         margin-top: 30px;
         text-align: center;
     }
-
     #right {
         width: 50%;
         height: 600px;
@@ -86,7 +78,6 @@
         float: left;
         position: relative;
     }
-
     #right_content {
         position: absolute;
         text-align: center;
@@ -98,7 +89,6 @@
         margin: auto;
         background-color: bisque;
     }
-
     #username_input {
         width: 300px;
         height: 45px;
@@ -110,7 +100,6 @@
         right: 0;
         margin: auto;
     }
-
     form.card {
         box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     }
@@ -222,11 +211,9 @@
 </script>
 
 <script type="text/javascript">
-
     function loginUser() {
         var email = document.getElementById('username').value;
         var password = document.getElementById('password').value;
-
         if (firebase.auth().currentUser) {
             // [START signout]
             firebase.auth().signOut();
@@ -242,7 +229,6 @@
             });
         }
     }
-
     firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
             // User is signed in.
@@ -254,7 +240,4 @@
             // alert(" signed out");
         }
     });
-
 </script>
-
-</html>
