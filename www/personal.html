@@ -55,7 +55,7 @@
                         user.interests = curData.interests;
                         user.skills = curData.skills;
                         user.rate = curData.rate;
-                        user.rate_amount = curData.rate_amount; 
+                        user.rate_amount = curData.rate_amount;
                         loadPage(user);
                         loadCalendar(user);
                     }
@@ -65,11 +65,11 @@
 
                 var course_user_id = uid;
                 var course_user = 'user1';
-                firebase.firestore().collection("course").where("user1_id", "==", uid).get().then(function(querySnapshot) {
+                firebase.firestore().collection("course").where("user1_id", "==", uid).get().then(function (querySnapshot) {
 
                     var courseIdList = new Array();
                     var course_num = 0;
-                    querySnapshot.forEach(function(doc) {
+                    querySnapshot.forEach(function (doc) {
 
                         console.log(doc.id, " --> ", doc.data());
                         courseIdList[course_num] = doc.id;
@@ -78,14 +78,14 @@
                         loadCourse(courseIdList, course_num, course_user_id, course_user);
                     });
                     // loadCourse(courseIdList, course_num, course_user_id, course_user);
-                }).catch(function(error) {
+                }).catch(function (error) {
                     console.log("ERROR: " + error);
                 });
 
-                firebase.firestore().collection("course").where("user2_id", "==", uid).get().then(function(querySnapshot) {  
-                    var courseIdList = new Array(); 
+                firebase.firestore().collection("course").where("user2_id", "==", uid).get().then(function (querySnapshot) {
+                    var courseIdList = new Array();
                     var course_num = 0;
-                    querySnapshot.forEach(function(doc) {
+                    querySnapshot.forEach(function (doc) {
                         console.log(doc.id, " --> ", doc.data());
                         courseIdList[course_num] = doc.id;
                         course_num = parseInt(course_num) + 1;
@@ -93,29 +93,29 @@
                         loadCourse(courseIdList, course_num, course_user_id, course_user);
                     });
                     // loadCourse(courseIdList, course_num, course_user_id, course_user);
-                }).catch(function(error) {
+                }).catch(function (error) {
                     console.log("ERROR: " + error);
                 });
 
-                loadPage(user); 
+                loadPage(user);
 
             }
         });
-    }; 
+    };
 
-    function loadCourse(courseIdList, course_num, course_user_id, course_user){
+    function loadCourse(courseIdList, course_num, course_user_id, course_user) {
         var course_title, course_start_time, course_end_time, course_tutor_name, course_tutor_id;
         console.log("course_user: " + course_user);
-        var courseRef = firestore.doc("course/" + courseIdList[course_num-1]);
+        var courseRef = firestore.doc("course/" + courseIdList[course_num - 1]);
         courseRef.get().then(function (doc) {
             if (doc && doc.exists) {
                 var curData = doc.data();
-                if(course_user == "user1"){
+                if (course_user == "user1") {
 
                     course_title = curData.course_name_user1;
                     course_tutor_id = curData.user2_id;
                 }
-                else if(course_user == "user2"){
+                else if (course_user == "user2") {
                     course_title = curData.course_name_user2;
                     course_tutor_id = curData.user1_id;
                 }
@@ -127,7 +127,7 @@
                     if (doc && doc.exists) {
                         const curData = doc.data();
                         course_tutor_name = curData.username;
-                        addACourse(courseIdList[course_num-1], course_title, course_start_time, course_end_time, course_tutor_id, course_tutor_name);
+                        addACourse(courseIdList[course_num - 1], course_title, course_start_time, course_end_time, course_tutor_id, course_tutor_name);
                     }
                 }).catch(function (error) {
                     console.log("Got an error: " + error);
@@ -140,12 +140,12 @@
         // }
     }
 
-    function addACourse(course_id, course_title, start_time, end_time, course_tutor_id, course_tutor_name){
-        try{
+    function addACourse(course_id, course_title, start_time, end_time, course_tutor_id, course_tutor_name) {
+        try {
             var course_table = document.getElementById('course_table');
             var course_table_tr = document.createElement('tr');
             course_table.appendChild(course_table_tr);
-            
+
             //course_table_title
             var course_table_title = document.createElement("td");
             course_table_tr.appendChild(course_table_title);
@@ -157,7 +157,7 @@
             course_table_tr.appendChild(course_table_tutorName);
             course_table_tutorName.id = "course_table_tutorName";
             course_table_tutorName.innerHTML = course_tutor_name;
-            course_table_tutorName.onclick = function() {
+            course_table_tutorName.onclick = function () {
                 goTutorPage(course_tutor_id);
             }
 
@@ -183,7 +183,7 @@
             course_course.id = "course_course";
             course_course.type = "button";
             course_course.value = "Course";
-            course_course.onclick = function() {
+            course_course.onclick = function () {
                 goCourse(course_id, course_title, course_tutor_id, course_tutor_name);
             }
             course_table_button.appendChild(course_course);
@@ -191,7 +191,7 @@
             course_rate.id = "course_rate";
             course_rate.type = "button";
             course_rate.value = "Rate";
-            course_rate.onclick = function() {
+            course_rate.onclick = function () {
                 goRate(course_tutor_id, course_title, start_time);
             }
             course_table_button.appendChild(course_rate);
@@ -199,12 +199,12 @@
             course_cancel.id = "course_cancel";
             course_cancel.type = "button";
             course_cancel.value = "Cancel";
-            course_cancel.onclick = function() {
+            course_cancel.onclick = function () {
                 cancelCourse(course_id);
             }
             course_table_button.appendChild(course_cancel);
-            
-        }catch(error){
+
+        } catch (error) {
             console.log(error);
         }
     }
@@ -217,7 +217,7 @@
         // if(current_user == uid)  usersRef = firestore.doc("users/" + uid);
         // else usersRef = firestore.doc("users/" + current_user);
         usersRef.get().then(function (doc) {
-            if (doc && doc.exists) { 
+            if (doc && doc.exists) {
                 const curData = doc.data();
                 user.email = curData.email;
                 user.credit = curData.credit;
@@ -336,7 +336,7 @@
         });
 
 
- 
+
 
     }
 
@@ -355,9 +355,19 @@
     function setUserInfo(user, username) {
         var uid = user.uid;
         var gender;
+        if (user.rate_amount == undefined) {
+            user.rate_amount = 0;
+        }
         var rate_amount = user.rate_amount;
+        if (user.interests == undefined) {
+            user.interests = new Array();
+        }
+        if (user.skills == undefined) {
+            user.skills = new Array();
+        }
         var interests = user.interests;
         var skills = user.skills;
+        var email = user.email;
         var credit = document.getElementById("info_credit").textContent;
         var rate = document.getElementById("info_rate").textContent;
         var phone = document.getElementById("phone_input").value;
@@ -458,7 +468,7 @@
                 rate = curData.rate;
                 email = curData.email;
                 rate_amount = curData.rate_amount;
-                
+
                 username = curData.username;
                 loadPage(user);
 
@@ -495,7 +505,7 @@
     function add_skill() {
         var user = firebase.auth().currentUser;
         const usersRef = firestore.doc("users/" + user.uid);
-        var phone, gender,credit, rate, username;
+        var phone, gender, credit, rate, username;
         usersRef.get().then(function (doc) {
             if (doc && doc.exists) {
                 const curData = doc.data();
@@ -673,31 +683,31 @@
             end_time: new_end,
             user_id: uid
         })
-        .then(function(docRef) {
-            document.getElementById("mask_calendar").style.display = 'none';
-            alert("New event added!");
-            console.log("Document written with ID: ", docRef.id);
+            .then(function (docRef) {
+                document.getElementById("mask_calendar").style.display = 'none';
+                alert("New event added!");
+                console.log("Document written with ID: ", docRef.id);
 
-            document.getElementById("new_event_title").value = "";
-            document.getElementById("new_event_start_time").value = "";
-            document.getElementById("new_event_end_time").value = "";
+                document.getElementById("new_event_title").value = "";
+                document.getElementById("new_event_start_time").value = "";
+                document.getElementById("new_event_end_time").value = "";
 
-            firebase.firestore().collection("calendar").where("user_id", "==", uid).get().then(function (querySnapshot) {
-            var eventIdList = new Array();
-            var event_num = 0;
-            querySnapshot.forEach(function (doc) {
-                console.log(doc.id, " --> ", doc.data()); 
-                eventIdList[event_num] = doc.id;
-                event_num = parseInt(event_num) + 1;
-                loadEvent(uid, eventIdList, event_num, chosen_date);
+                firebase.firestore().collection("calendar").where("user_id", "==", uid).get().then(function (querySnapshot) {
+                    var eventIdList = new Array();
+                    var event_num = 0;
+                    querySnapshot.forEach(function (doc) {
+                        console.log(doc.id, " --> ", doc.data());
+                        eventIdList[event_num] = doc.id;
+                        event_num = parseInt(event_num) + 1;
+                        loadEvent(uid, eventIdList, event_num, chosen_date);
+                    });
+                }).catch(function (error) {
+                    console.log("ERROR: " + error);
+                });
+            })
+            .catch(function (error) {
+                console.error("Error adding document: ", error);
             });
-            }).catch(function (error) {
-                console.log("ERROR: " + error);
-            });
-        })
-        .catch(function(error) {
-            console.error("Error adding document: ", error);
-        });
 
     }
 
@@ -904,12 +914,12 @@
         right: 0;
         margin: auto;
         display: block;
-        border: 1px dashed #b2b2b2; 
+        border: 1px dashed #b2b2b2;
     }
 
     #tab_info,
     #tab_video,
-    #tab_calendar{
+    #tab_calendar {
         display: block;
         width: 600px;
         height: 800px;
@@ -920,7 +930,7 @@
         padding-top: 5px;
     }
 
-    #info_table_top tr td{
+    #info_table_top tr td {
         padding-top: 10px;
     }
 
@@ -1203,20 +1213,22 @@
         height: 250px;
     }
 
-    #event_list_table_title{
+    #event_list_table_title {
         width: 575px;
-        height: 20px; 
+        height: 20px;
         margin-top: 15px;
     }
 
-    #event_list_table tr, #event_list_table_title tr {
+    #event_list_table tr,
+    #event_list_table_title tr {
         display: block;
         height: 38px;
         width: 575px;
         text-align: center;
     }
 
-    #event_list_table tr td, #event_list_table_title tr td {
+    #event_list_table tr td,
+    #event_list_table_title tr td {
         float: left;
         display: block;
         text-align: center;
@@ -1248,6 +1260,7 @@
         margin-left: 10px;
         line-height: 30px;
     }
+
     #event_end_date {
         margin-left: 5px;
     }
@@ -1304,7 +1317,7 @@
         text-decoration: none;
     }
 
-    #tab_course{
+    #tab_course {
         display: block;
         width: 650px;
         height: 800px;
@@ -1341,7 +1354,8 @@
         float: left;
     }
 
-    #course_table_title, #course_table_title_title {
+    #course_table_title,
+    #course_table_title_title {
         display: block;
         width: 125px;
         height: 40x;
@@ -1349,7 +1363,8 @@
         text-align: center;
     }
 
-    #course_table_tutorName, #course_table_tutorName_title {
+    #course_table_tutorName,
+    #course_table_tutorName_title {
         display: block;
         width: 100px;
         height: 40px;
@@ -1371,7 +1386,7 @@
         margin-right: 25px;
     }
 
-    #course_table_date_title{
+    #course_table_date_title {
         padding-left: 18px;
     }
 
@@ -1402,6 +1417,7 @@
         text-align: center;
 
     }
+
     #course_table_button {
         display: block;
         width: 180px;
@@ -1427,7 +1443,8 @@
         float: left;
     }
 
-    #course_rate, #course_course {
+    #course_rate,
+    #course_course {
         margin-right: 1px;
     }
 
@@ -1616,15 +1633,15 @@
         height: 25px;
     }
 
-    #add_event_event input{
+    #add_event_event input {
         width: 190px;
         height: 25px;
         font-size: 13px;
     }
 
     #new_event_start_date,
-    #new_event_end_date{
-        display: block; 
+    #new_event_end_date {
+        display: block;
         float: left;
         width: 120px;
         height: 25px;
@@ -1859,13 +1876,13 @@
 
                     <li id="tab_calendar" name="tab">
                         <div id="calendar_box">
-                        <!-- [DATE SELECTOR] -->
+                            <!-- [DATE SELECTOR] -->
                             <div id="selector">
                                 <select id="month"></select>
                                 <select id="year"></select>
-                                <input type="button" value="SET" onclick="cal.list()"/>
+                                <input type="button" value="SET" onclick="cal.list()" />
                             </div>
-                        
+
                             <!-- [CALENDAR] -->
                             <div id="container"></div>
                         </div>
@@ -1877,8 +1894,8 @@
 
                             <form>
                                 <table id="event_list_table_title">
-                                    <tr> 
-                                        <td id="event_title">Event1</td> 
+                                    <tr>
+                                        <td id="event_title">Event1</td>
                                         <td id="event_start_date">Start-Time</td>
                                         <td id="event_connect">&nbsp;&nbsp;</td>
                                         <td id="event_end_date">End-Time</td>
@@ -1897,7 +1914,8 @@
                                     <tbody id="course_table">
                                         <tr>
                                             <td id="course_table_title_title" style="font-size:18px;">Subject</td>
-                                            <td id="course_table_tutorName_title" style="font-size:18px;">Paired-User</td>
+                                            <td id="course_table_tutorName_title" style="font-size:18px;">Paired-User
+                                            </td>
                                             <td id="course_table_date_title" style="font-size:18px;">Course Time</td>
                                             <td id="course_table_button_title" style="font-size:18px;">Process</td>
                                         </tr>
@@ -1982,15 +2000,18 @@
                     </tr>
                     <tr id="mask_calendar_start">
                         <td id="add_event_title">Start Time</td>
-                        <td id="add_event_time"><span id="new_event_start_date"></span><input id="new_event_start_time" type="time"></td>
+                        <td id="add_event_time"><span id="new_event_start_date"></span><input id="new_event_start_time"
+                                type="time"></td>
                     </tr>
                     <tr id="mask_calendar_end">
                         <td id="add_event_title">End Time</td>
-                        <td id="add_event_time"><span id="new_event_end_date"></span><input id="new_event_end_time" type="time"></td>
+                        <td id="add_event_time"><span id="new_event_end_date"></span><input id="new_event_end_time"
+                                type="time"></td>
                     </tr>
                     <tr id="mask_calendar_button">
                         <td colspan="2">
-                            <input id="mask_button" type="button" value="Submit" style="margin-left:45px;" onclick="add_event()">
+                            <input id="mask_button" type="button" value="Submit" style="margin-left:45px;"
+                                onclick="add_event()">
                             <input id="mask_button" type="button" value="Cancel" style="margin-left:30px"
                                 onclick="quit()">
                         </td>
@@ -2033,7 +2054,7 @@
     tabs[3].style.display = 'none';
 
     var quest = window.location.search.substr(12);
-    if(quest == "true") {
+    if (quest == "true") {
         spans[3].style.display = 'block';
         spans[3].style.background = '#162f59';
         spans[3].style.color = '#e5f2f8';
@@ -2049,7 +2070,7 @@
 
         spans[2].style.background = '';
         spans[2].style.color = '';
-        tabs[2].style.display = 'none';        
+        tabs[2].style.display = 'none';
     }
 
     spans[0].onclick = function () {
@@ -2142,7 +2163,7 @@
         }
         // window.location.href="calendar.action?cur="+cur;
     }
-    
+
     function next(num) {
         var cur = parseInt($("#cur").html());
         var all = parseInt($("#all").html());
@@ -2156,22 +2177,22 @@
         // window.location.href="calendar.action?cur="+cur;
     }
 
-    function goTutorPage(tutor_id){
-        window.location='user.html?tutor_id=' + tutor_id;
+    function goTutorPage(tutor_id) {
+        window.location = 'user.html?tutor_id=' + tutor_id;
     }
-    function goCourse(course_id, course_name, tutor_id, tutor_name){
-        window.location='index.html?course_id=' + course_id + "&course_name=" + course_name + "&tutor_id=" + tutor_id + "&tutor_name=" + tutor_name;
+    function goCourse(course_id, course_name, tutor_id, tutor_name) {
+        window.location = 'index.html?course_id=' + course_id + "&course_name=" + course_name + "&tutor_id=" + tutor_id + "&tutor_name=" + tutor_name;
     }
-    function goRate(tutor_id, course_name, course_date){
-        window.location='rate.html?tutor_id=' + tutor_id + "&course_name=" + course_name + "&course_date=" + course_date;
+    function goRate(tutor_id, course_name, course_date) {
+        window.location = 'rate.html?tutor_id=' + tutor_id + "&course_name=" + course_name + "&course_date=" + course_date;
     }
     function cancelCourse(course_id) {
         var user = firebase.auth().currentUser;
         var courseRef = firestore.doc("course/" + course_id);
-        courseRef.delete().then(function() {
+        courseRef.delete().then(function () {
             alert("Cancelled successfully!");
             window.location.href = "personal.html?coursePage=" + "true";
-        }).catch(function(error) {
+        }).catch(function (error) {
             console.error("Error removing document: ", error);
         });
     }
