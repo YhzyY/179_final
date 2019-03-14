@@ -31,7 +31,7 @@
         firebase.auth().onAuthStateChanged(function (user) {
             if (user) {
                 console.log(user);
-
+ 
                 var uid = user.uid;
                 var email, credit, gender, username, phone, interests, skills, rate;
                 const usersRef = firestore.doc("users/" + uid);
@@ -686,31 +686,32 @@
             end_time: new_end,
             user_id: uid
         })
-            .then(function (docRef) {
-                document.getElementById("mask_calendar").style.display = 'none';
-                alert("New event added!");
-                console.log("Document written with ID: ", docRef.id);
+        .then(function (docRef) {
+            document.getElementById("mask_calendar").style.display = 'none';
+            alert("New event added!");
+            console.log("Document written with ID: ", docRef.id);
 
-                document.getElementById("new_event_title").value = "";
-                document.getElementById("new_event_start_time").value = "";
-                document.getElementById("new_event_end_time").value = "";
+            document.getElementById("new_event_title").value = "";
+            document.getElementById("new_event_start_time").value = "";
+            document.getElementById("new_event_end_time").value = "";
 
-                firebase.firestore().collection("calendar").where("user_id", "==", uid).get().then(function (querySnapshot) {
-                    var eventIdList = new Array();
-                    var event_num = 0;
-                    querySnapshot.forEach(function (doc) {
-                        console.log(doc.id, " --> ", doc.data());
-                        eventIdList[event_num] = doc.id;
-                        event_num = parseInt(event_num) + 1;
-                        loadEvent(uid, eventIdList, event_num, chosen_date);
-                    });
-                }).catch(function (error) {
-                    console.log("ERROR: " + error);
+            document.getElementById('event_list_table').innerHTML = "";
+            firebase.firestore().collection("calendar").where("user_id", "==", uid).get().then(function (querySnapshot) {
+                var eventIdList = new Array();
+                var event_num = 0;
+                querySnapshot.forEach(function (doc) {
+                    console.log(doc.id, " --> ", doc.data());
+                    eventIdList[event_num] = doc.id;
+                    event_num = parseInt(event_num) + 1;
+                    loadEvent(uid, eventIdList, event_num, chosen_date);
                 });
-            })
-            .catch(function (error) {
-                console.error("Error adding document: ", error);
+            }).catch(function (error) {
+                console.log("ERROR: " + error);
             });
+        })
+        .catch(function (error) {
+            console.error("Error adding document: ", error);
+        });
 
     }
 
@@ -1213,7 +1214,9 @@
 
     #event_list_table {
         width: 575px;
-        height: 250px;
+        height: 125px;
+        display: block;
+        overflow-y: scroll;
     }
 
     #event_list_table_title {
