@@ -38,76 +38,12 @@
     var course_name = getQuery("course_name");
     var tutor_id = getQuery("tutor_id");
     var tutor_name = getQuery("tutor_name");
+    var uid = getQuery("uid");
     console.log("tutor_id: " + tutor_id + "\n course_name: " + course_name + "\n course_id: " + course_id);
 
-
+    console.log("currentUser in course page \n" + uid);
     var firestore = firebase.firestore();
-    window.onload = function () {
-        firebase.auth().onAuthStateChanged(function (user) {
-            if (user) {
-                var uid = user.uid;
-                var email, credit, gender, username, phone, interests, skills, rate;
-                const usersRef = firestore.doc("users/" + uid);
-                const courseRef = firestore.doc("course/1");
 
-                document.getElementById('signup').style.display = 'none';
-                document.getElementById('login').style.display = 'none';
-                document.getElementById('top1').style.display = 'none';
-                document.getElementById('top2').style.display = 'none';
-                document.getElementById('user').style.display = 'block';
-                document.getElementById('top3').style.display = 'block';
-                document.getElementById('signout').style.display = 'block';
-
-
-                document.getElementById("hide_info").textContent = tutor_id;
-
-                usersRef.get().then(function (doc) {
-                    if (doc && doc.exists) { 
-                        const curData = doc.data();
-                        user.email = curData.email;
-                        user.credit = curData.credit;
-                        user.gender = curData.gender;
-                        user.username = curData.username;
-                        user.phone = curData.phone;
-                        user.interests = curData.interests;
-                        user.skills = curData.skills;
-                        user.rate = curData.rate;
-                        user.rate_amount = curData.rate_amount;
-
-                        loadPage(user);
-                    }
-                }).catch(function (error) {
-                    alert("Got an error: " + error);
-                });
-
-            }
-        });
-    };
-
-    function loadPage(user) {
-        if (user.username) {
-            document.getElementById('title_username').textContent = user.username;
-        }
-        else if (user.email) {
-            document.getElementById('title_username').textContent = user.email;
-        }
-
-        document.getElementById("username").textContent = tutor_name;
-        document.getElementById("subject").textContent = course_name;
-
-        
-    }
-    function signout() {
-
-        firebase.auth().signOut().then(function () {
-            // Sign-out successful.
-            window.location.href = "login.html";
-        }, function (error) {
-            // An error happened.
-            alert(error);
-        });
-
-    }
 </script>
 <style>
    #top {
@@ -366,7 +302,8 @@
 </style>
 
 <body>
-    <div id="hide_info" style="display: none;"></div>
+    <div id="hide_uid" style="display: none;"></div>
+    <div id="hide_tid" style="display: none;"></div>
     <div id="top">
         <div id="top_content">
             <ul>
@@ -403,7 +340,7 @@
                     </td>
                     <td id="info">
                         <p id="info_title">Subject</p>
-                        <p id="subject">Basketball</p>
+                        <p id="subject">Subject</p>
                     </td>
                     <td>&nbsp;</td>
                 </tr>
@@ -428,9 +365,17 @@
             </table>
         </form>
     </div>
-    <!-- <script src="/socket.io/socket.io.js"></script>
-    <script src="kchat.js"></script> -->
+
+    <div id="loginWrapper" class="loginWrapper" style="display: none">
+
+        <div id="nickWrapper" class="nickWrapper col-md-4 col-md-offset-4 col-sm-12">
+            <input type="button" class="btn btn-success" id="loginBtn" value="Login" />
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script/kchat.js"></script>
 
 </body>
 
-</html> 
+</html>

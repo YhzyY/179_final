@@ -13,7 +13,7 @@ console.log("Server has started.");
 
 //socket
 io.on('connection', function (socket) {
-
+	console.log("start of server");
 	socket.on('login', function (nickname) {
 		console.log('login');
 
@@ -54,12 +54,36 @@ io.on('connection', function (socket) {
 
 	//私聊信息
 	socket.on('send private message', function (res) {
-		console.log(res);
+		try{
+		console.log("\n\n\n\n\n\n\n\n\n\n\n\n\n" );
+		console.log("res:  " + res);
+		var addresser = res.addresser;
+		var recipient = res.recipient;
+		var msg = res.body;
+		console.log("addresser" + addresser);
+		console.log("recipient" + recipient);
+		console.log("msg" + msg);
+		// if (recipient in user_socket) {
+		// 	console.log("recipient" + recipient);
+		// 	user_socket[recipient].emit('receive private message', msg);
+		// }
+		// else{
+		// 	console.log("addresser:  " + addresser);
+		// 	user_socket[addresser].emit('paired user is offline',msg);
+		// 	return;
+		// }
+
 		if (res.recipient in user_socket) {
-			user_socket[res.recipient].emit('receive private message', res);
+			// user_socket[res.recipient].emit('receive private message', msg);
+			socket.broadcast.emit('receive private message', msg);
 		}
 		else{
-			user_socket[res.addresser].emit('paired user is offline',res);
+			console.log(res.addresser)
+			user_socket[res.addresser].emit('paired user is offline',msg);
 		}
+	}
+	catch(error){
+		console.log(error);
+	}
 	});
 });

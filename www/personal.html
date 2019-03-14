@@ -142,6 +142,9 @@
 
     function addACourse(course_id, course_title, start_time, end_time, course_tutor_id, course_tutor_name) {
         try {
+            var user = firebase.auth().currentUser;
+            var uid = user.uid;
+
             var course_table = document.getElementById('course_table');
             var course_table_tr = document.createElement('tr');
             course_table.appendChild(course_table_tr);
@@ -184,7 +187,7 @@
             course_course.type = "button";
             course_course.value = "Course";
             course_course.onclick = function () {
-                goCourse(course_id, course_title, course_tutor_id, course_tutor_name);
+                goCourse(uid, course_id, course_title, course_tutor_id, course_tutor_name);
             }
             course_table_button.appendChild(course_course);
             var course_rate = document.createElement("input");
@@ -2180,8 +2183,8 @@
     function goTutorPage(tutor_id) {
         window.location = 'user.html?tutor_id=' + tutor_id;
     }
-    function goCourse(course_id, course_name, tutor_id, tutor_name) {
-        window.location = 'index.html?course_id=' + course_id + "&course_name=" + course_name + "&tutor_id=" + tutor_id + "&tutor_name=" + tutor_name;
+    function goCourse(uid, course_id, course_name, tutor_id, tutor_name) {
+        window.location = "index.html?uid=" + uid + "&course_id=" + course_id + "&course_name=" + course_name + "&tutor_id=" + tutor_id + "&tutor_name=" + tutor_name;
     }
     function goRate(tutor_id, course_name, course_date) {
         window.location = 'rate.html?tutor_id=' + tutor_id + "&course_name=" + course_name + "&course_date=" + course_date;
