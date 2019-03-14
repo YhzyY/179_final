@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Hobby-ever</title>
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="https://cdn.firebase.com/libs/firebaseui/3.1.1/firebaseui.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.1.1/firebaseui.css" />
+
+</head>
+<script src="https://www.gstatic.com/firebasejs/5.8.5/firebase.js"></script>
+<script>
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyCZ59-0Z7syxxHyDbV1O8I1B8Uxq6swBV0",
+        authDomain: "cs179-final.firebaseapp.com",
+        databaseURL: "https://cs179-final.firebaseio.com",
+        projectId: "cs179-final",
+        storageBucket: "cs179-final.appspot.com",
+        messagingSenderId: "863057579113"
+    };
+    firebase.initializeApp(config);
+</script>
+
+<script type="text/javascript">
+
+    function getQuery(query) {
+        var request = window.location.search.substr(1);
+        var queries = request.split("&");
+        for(var i=0; i<queries.length; i++) {
+            query_pair = queries[i].split("=");
+            if(query_pair[0] == query)
+                return query_pair[1];
+        }
+        return (false);
+    }
+
+    var tutor_id = getQuery("tutor_id");
+    var course_name = getQuery("course_name");
+    var course_date = getQuery("course_date").substr(0,10);
+    console.log("tutor_id: " + tutor_id + "\n course_name: " + course_name + "\n course_date: " + course_date);
+
+    var firestore = firebase.firestore();
+    window.onload = function () {
+        firebase.auth().onAuthStateChanged(function (user) {
+            if (user) {
+                var uid = user.uid;
+                var email, credit, gender, username, phone, interests, skills, rate;
+                const usersRef = firestore.doc("users/" + uid);
+                const courseRef = firestore.doc("course/1");
+
+                document.getElementById('signup').style.display = 'none';
+                document.getElementById('login').style.display = 'none';
+                document.getElementById('top1').style.display = 'none';
+                document.getElementById('top2').style.display = 'none';
+                document.getElementById('user').style.display = 'block';
+                document.getElementById('top3').style.display = 'block';
+                document.getElementById('signout').style.display = 'block';
+
+                usersRef.get().then(function (doc) {
+                    if (doc && doc.exists) { 
+                        const curData = doc.data();
+                        user.email = curData.email;
+                        user.credit = curData.credit;
+                        user.gender = curData.gender;
+                        user.username = curData.username;
+                        user.phone = curData.phone;
+                        user.interests = curData.interests;
+                        user.skills = curData.skills;
+                        user.rate = curData.rate;
+                        user.rate_amount = curData.rate_amount;
+
+                        loadPage(user);
+                    }
+                }).catch(function (error) {
+                    console.log("Got an error: " + error);
+                });
+
+            }
+        });
+    };
+    function loadPage(user) {
+        if (user.username) {
+            document.getElementById('username').textContent = user.username;
+        }
+        else if (user.email) {
+            document.getElementById('username').textContent = user.email;
+        }
+
+        const tutorRef = firestore.doc("users/" + tutor_id);
+        tutorRef.get().then(function (doc) {
+            if (doc && doc.exists) { 
+                const curData = doc.data();
+                var tutor_email = curData.email;
+                var tutor_username = curData.username;
+                
+                if(tutor_username) document.getElementById("rate_email").textContent = tutor_username;
+                else document.getElementById("rate_email").textContent = tutor_email;
+
+                document.getElementById("rate_subject").textContent = course_name;
+                document.getElementById("rate_time").textContent = course_date;
+            }
+        }).catch(function (error) {
+            console.log("Got an error: " + error);
+        });
+    }
+
+    function signout() {
+
+        firebase.auth().signOut().then(function () {
+            // Sign-out successful.
+            window.location.href = "login.html";
+        }, function (error) {
+            // An error happened.
+            alert(error);
+        });
+    }
+
+    function updateRate() {
+        var interests, skills, gender, credit, rate, email, phone, username, rate_amount;
+        const tutorRef = firestore.doc("users/" + tutor_id);
+
+        tutorRef.get().then(function (doc) {
+            if (doc && doc.exists) { 
+                const curData = doc.data();
+                email = curData.email;
+                credit = curData.credit;
+                gender = curData.gender;
+                username = curData.username;
+                phone = curData.phone;
+                interests = curData.interests;
+                skills = curData.skills;
+                rate = curData.rate;
+                rate_amount = curData.rate_amount;
+
+                var rate_score = new Array();
+                var quest1 = document.getElementsByName('question1');
+                var quest2 = document.getElementsByName('question2');
+                var quest3 = document.getElementsByName('question3');
+                var quest4 = document.getElementsByName('question4');
+                var quest5 = document.getElementsByName('question5');
+                var count = 0;
+                var score = 0;
+                var newRate = rate;
+                rate_score[0] = 0;
+                rate_score[1] = 0;
+                rate_score[2] = 0;
+                rate_score[3] = 0; 
+                rate_score[4] = 0;
+
+                for(var i=0; i<5; i++){
+                    if(quest1[i].checked) {rate_score[0] = quest1[i].value;count = count+1;}
+                    if(quest2[i].checked) {rate_score[1] = quest2[i].value;count = count+1;}
+                    if(quest3[i].checked) {rate_score[2] = quest3[i].value;count = count+1;}
+                    if(quest4[i].checked) {rate_score[3] = quest4[i].value;count = count+1;}
+                    if(quest5[i].checked) {rate_score[4] = quest5[i].value;count = count+1;} 
+                }
+                if(count!=0) {
+                    score = (parseInt(rate_score[0]) + parseInt(rate_score[1]) + parseInt(rate_score[2]) + parseInt(rate_score[3]) + parseInt(rate_score[4])) / parseInt(count);
+                    newRate = (parseFloat(rate*rate_amount) + score) / (parseInt(rate_amount) + 1);
+                    newRate = newRate.toFixed(2);
+                    rate_amount = parseInt(rate_amount) + 1
+                
+
+                    tutorRef.set({
+                        email: email,  
+                        phone: phone,
+                        gender: gender,
+                        interests: interests,
+                        skills: skills, 
+                        credit: credit,
+                        rate: newRate,
+                        username: username,
+                        rate_amount: rate_amount
+                    }).then(function () {
+                        alert("Thank you for your feedback!");
+                        resetRate();
+                        console.log("score: " + score + " rate: " + rate + " newRate: " + newRate + " rate_amount: " + rate_amount);
+                        window.location.href = "personal.html?coursePage=" + "true";
+                        console.log("New rate status saved");
+                    }).catch(function (error) {
+                        console.log("Got an error: " + error);
+                    });
+                }
+                else{
+                    alert("Please rate at least one question!");
+                }
+            }
+        }).catch(function (error) {
+            console.log("Got an error: " + error);
+        });
+
+
+    }
+
+    function resetRate() {
+        for(var i=0; i<5; i++){
+            $('[name="question1"]').prop("checked", false);
+            $('[name="question2"]').prop("checked", false);
+            $('[name="question3"]').prop("checked", false);
+            $('[name="question4"]').prop("checked", false);
+            $('[name="question5"]').prop("checked", false);
+        }
+    }
+
+
+</script>
+<style>
+    #top {
+        background-color: white;
+        width: 100%;
+        height: 31px;
+        position: relative;
+    }
+
+    #top_content {
+        width: 900px;
+        height: 30px;
+        position: absolute;
+        left: 0;
+        right: 0;
+        margin: auto;
+    }
+
+    #top ul {
+        display: block;
+        height: 30px;
+        float: right;
+        line-height: 30px;
+        margin-top: 0;
+    }
+
+    #top ul li {
+        float: left;
+        list-style: none;
+        color: rgb(110, 110, 110);
+        font-size: 14px;
+    }
+
+    #top ul li a {
+        list-style: none;
+        text-decoration: none;
+        color: rgb(110, 110, 110);
+        font-size: 14px;
+    }
+
+    #signup,
+    #login,
+    #signout {
+        float: left;
+        list-style: none;
+        text-decoration: none;
+        color: rgb(110, 110, 110);
+        font-size: 14px;
+        display: block;
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+
+    #user {
+        float: left;
+        list-style: none;
+        text-decoration: none;
+        color: rgb(110, 110, 110);
+        font-size: 14px;
+        display: block;
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        margin-left: 10px;
+    }
+
+    #signout,
+    #user,
+    #top2,
+    #top3 {
+        display: none;
+    }
+
+    #username {
+        margin-right: 10px;
+    }
+
+    #menu {
+        background-color: #162f59;
+        width: 100%;
+        height: 60px;
+    }
+
+    #menu_content {
+        width: 975px;
+        height: 60px;
+        line-height: 60px;
+        position: relative;
+        left: 0;
+        right: 0;
+        margin: auto;
+    }
+
+    #menu_content ul {
+        display: block;
+        height: 30px;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+    }
+
+    #menu_content ul li {
+        float: left;
+        display: block;
+    }
+
+    #menu_content ul li a {
+        list-style: none;
+        text-decoration: none;
+        color: #f9fcfd;
+    }
+
+    #menu_homepage {
+        width: 100px;
+    }
+
+    #menu_match,
+    #menu_search,
+    #menu_personal,
+    #menu_rate,
+    #menu_course {
+        width: 75px;
+        text-align: center;
+    }
+
+    #title {
+        width: 800px;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+    }
+
+    #title p {
+        font-size: 36px;
+
+    }
+
+    #middle {
+        width: 100%;
+        height: 800px;
+        margin-top: 40px;
+        background: linear-gradient(to bottom, white, #e5f2f8);
+    }
+
+    #middle_content {
+        width: 800px;
+        height: 750px;
+        background: linear-gradient(to bottom, white, #e5f2f8);
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+    }
+
+    #middle_content table {
+        width: 460px;
+        height: 580px;
+        left: 0;
+        right: 0;
+        margin: auto;
+        padding-top: 30px;
+    }
+
+    #middle_content tr {
+        margin-top: 8px;
+        display: block;
+    }
+
+    #middle_content tr td {
+        width: 475px;
+    }
+
+    #info {
+        width: 600px;
+        padding-left: 25px;
+        line-height: 20px;
+        font-size: 20px;
+    }
+
+    #rate_email, #rate_time, #rate_subject {
+        font-size: 16px;
+        margin-left: 10px;
+    }
+
+    #quest,
+    #answer {
+        padding-left: 25px;
+        height: 30px;
+        line-height: 20px;
+        font-size: 16px;
+    }
+
+    #quest {
+        padding-left: 25px;
+    }
+
+    #answer {
+        padding-left: 40px;
+    }
+
+    #ra {
+        margin-left: 40px;
+        font-size: 16px;
+        text-align: center;
+    }
+
+    #comment {
+        margin-left: 25px;
+        width: 345px;
+        height: 100px;
+        line-height: 20px;
+        font-size: 16px;
+    }
+
+    #butto {
+        text-align: center;
+        padding-top: 75px;
+    }
+
+    #butto input {
+        width: 120px;
+        height: 30px;
+        font-size: 16px;
+    }
+
+    form.card {
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    }
+</style>
+
+<body>
+
+    <div id="top">
+        <div id="top_content">
+            <ul>
+                <li id="signup"><a href="signup.html">Sign Up</a></li>
+                <li id="top1"> / </li>
+                <li id="login"><a href="login.html">Log In</a></li>
+                <li id="top2"> / </li>
+                <li id="user">Welcome, &nbsp;&nbsp;<a href="personal.html" id="username"></a></li>
+                <li id="top3"> / </li>
+                <li id="signout" onclick="signout()">Sign Out</li>
+            </ul>
+        </div>
+    </div>
+    <div id="menu">
+        <div id="menu_content">
+            <ul>
+                <li id="menu_homepage"><a href="main.html">Homepage</a></li>
+                <li id="menu_match"><a href="match.html">Match</a></li>
+                <li id="menu_search"><a href="search.html">Search</a></li>
+                <li id="menu_rate"><a href="rate.html">Rate</a></li>
+                <li id="menu_course"><a href="index.html">Course</a></li>
+                <li id="menu_personal"><a href="personal.html">Personal</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="title">
+        <p>Rate your paired-user</p>
+    </div>
+
+    <div id="middle">
+        <form id="middle_content" class="card">
+            <table>
+                <tr>
+                    <td id="info" name="rate_email" colspan="2">User: <span id="rate_email"></span></td>
+                </tr>
+                <tr>
+                    <td id="info" name="rate_subject">Subject: <span id="rate_subject"></span></td>
+                    <td id="info" name="rate_time">Date: <span id="rate_time"></span></td>
+                </tr>
+                <tr style="margin-top:20px;">
+                    <td colspan="2">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td id="quest" colspan="2">Q1. Is the course content match how your paired-user described?</td>
+                </tr>
+                <tr>
+                    <td id="answer" colspan="2">
+                        <label><input id="ra" name="question1" type="radio" value="5">5</label>
+                        <label><input id="ra" name="question1" type="radio" value="4">4</label>
+                        <label><input id="ra" name="question1" type="radio" value="3">3</label>
+                        <label><input id="ra" name="question1" type="radio" value="2">2</label>
+                        <label><input id="ra" name="question1" type="radio" value="1">1</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="quest" colspan="2">Q2. How would you rate your paired-user's ability in this aspect?</td>
+                </tr>
+                <tr>
+                    <td id="answer" colspan="2">
+                        <label><input id="ra" name="question2" type="radio" value="5">5</label>
+                        <label><input id="ra" name="question2" type="radio" value="4">4</label>
+                        <label><input id="ra" name="question2" type="radio" value="3">3</label>
+                        <label><input id="ra" name="question2" type="radio" value="2">2</label>
+                        <label><input id="ra" name="question2" type="radio" value="1">1</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="quest" colspan="2">Q3. How was your paired-user's attitude??</td>
+                </tr>
+                <tr>
+                    <td id="answer" colspan="2">
+                        <label><input id="ra" name="question3" type="radio" value="5">5</label>
+                        <label><input id="ra" name="question3" type="radio" value="4">4</label>
+                        <label><input id="ra" name="question3" type="radio" value="3">3</label>
+                        <label><input id="ra" name="question3" type="radio" value="2">2</label>
+                        <label><input id="ra" name="question3" type="radio" value="1">1</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="quest" colspan="2">Q4. How difficult do you think about this course?</td>
+                </tr>
+                <tr>
+                    <td id="answer" colspan="2">
+                        <label><input id="ra" name="question4" type="radio" value="5">5</label>
+                        <label><input id="ra" name="question4" type="radio" value="4">4</label>
+                        <label><input id="ra" name="question4" type="radio" value="3">3</label>
+                        <label><input id="ra" name="question4" type="radio" value="2">2</label>
+                        <label><input id="ra" name="question4" type="radio" value="1">1</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="quest" colspan="2">Q5. How would you overall rate your paired-user?</td>
+                </tr>
+                <tr>
+                    <td id="answer" colspan="2">
+                        <label><input id="ra" name="question5" type="radio" value="5">5</label>
+                        <label><input id="ra" name="question5" type="radio" value="4">4</label>
+                        <label><input id="ra" name="question5" type="radio" value="3">3</label>
+                        <label><input id="ra" name="question5" type="radio" value="2">2</label>
+                        <label><input id="ra" name="question5" type="radio" value="1">1</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="butto"><input type="button" value="Submit" onclick="updateRate()"></td>
+                    <td id="butto"><input type="button" value="Reset" onclick="resetRate()"></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+
+
+</body>
+
+</html>

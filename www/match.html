@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Hobby-ever</title>
+    <script src="https://cdn.firebase.com/libs/firebaseui/3.1.1/firebaseui.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.1.1/firebaseui.css" />
+
+</head>
+<script src="https://www.gstatic.com/firebasejs/5.8.5/firebase.js"></script>
+<script>
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyCZ59-0Z7syxxHyDbV1O8I1B8Uxq6swBV0",
+        authDomain: "cs179-final.firebaseapp.com",
+        databaseURL: "https://cs179-final.firebaseio.com",
+        projectId: "cs179-final",
+        storageBucket: "cs179-final.appspot.com",
+        messagingSenderId: "863057579113"
+    };
+    firebase.initializeApp(config);
+</script>
+
+<script type="text/javascript">
+    var firestore = firebase.firestore();
+    window.onload = function () {
+        firebase.auth().onAuthStateChanged(function (user) {
+            if (user) {
+                var uid = user.uid;
+                var email, credit, gender, username, phone, interests, skills, rate;
+                const usersRef = firestore.doc("users/" + uid);
+                const courseRef = firestore.doc("course/1");
+
+                document.getElementById('signup').style.display = 'none';
+                document.getElementById('login').style.display = 'none';
+                document.getElementById('top1').style.display = 'none';
+                document.getElementById('top2').style.display = 'none';
+                document.getElementById('user').style.display = 'block';
+                document.getElementById('top3').style.display = 'block';
+                document.getElementById('signout').style.display = 'block';
+
+                usersRef.get().then(function (doc) {
+                    if (doc && doc.exists) { 
+                        const curData = doc.data();
+                        user.email = curData.email;
+                        user.credit = curData.credit;
+                        user.gender = curData.gender;
+                        user.username = curData.username;
+                        user.phone = curData.phone;
+                        user.interests = curData.interests;
+                        user.skills = curData.skills;
+                        user.rate = curData.rate;
+                        user.rate_amount = curData.rate_amount;
+
+                        loadPage(user);
+                    }
+                }).catch(function (error) {
+                    alert("Got an error: " + error);
+                });
+
+            }
+        });
+    };
+
+    function loadPage(user) {
+        if (user.username) {
+            document.getElementById('username').textContent = user.username;
+        }
+        else if (user.email) {
+            document.getElementById('username').textContent = user.email;
+        }
+    }
+    function signout() {
+
+        firebase.auth().signOut().then(function () {
+            // Sign-out successful.
+            window.location.href = "login.html";
+        }, function (error) {
+            // An error happened.
+            alert(error);
+        });
+
+    }
+</script>
+<style>
+    #top {
+        background-color: white;
+        width: 100%;
+        height: 31px;
+        position: relative;
+    }
+
+    #top_content {
+        width: 900px;
+        height: 30px;
+        position: absolute;
+        left: 0;
+        right: 0;
+        margin: auto;
+    }
+
+    #top ul {
+        display: block;
+        height: 30px;
+        float: right;
+        line-height: 30px;
+        margin-top: 0;
+    }
+
+    #top ul li {
+        float: left;
+        list-style: none;
+        color: rgb(110, 110, 110);
+        font-size: 14px;
+    }
+
+    #top ul li a {
+        list-style: none;
+        text-decoration: none;
+        color: rgb(110, 110, 110);
+        font-size: 14px;
+    }
+
+    #signup,
+    #login,
+    #signout {
+        float: left;
+        list-style: none;
+        text-decoration: none;
+        color: rgb(110, 110, 110);
+        font-size: 14px;
+        display: block;
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+
+    #user {
+        float: left;
+        list-style: none;
+        text-decoration: none;
+        color: rgb(110, 110, 110);
+        font-size: 14px;
+        display: block;
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        margin-left: 10px;
+    }
+
+    #signout,
+    #user,
+    #top2,
+    #top3 {
+        display: none;
+    }
+
+    #username {
+        margin-right: 10px;
+    }
+
+    #menu {
+        background-color: #162f59;
+        width: 100%;
+        height: 60px;
+    }
+
+    #menu_content {
+        width: 975px;
+        height: 60px;
+        line-height: 60px;
+        position: relative;
+        left: 0;
+        right: 0;
+        margin: auto;
+    }
+
+    #menu_content ul {
+        display: block;
+        height: 30px;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+    }
+
+    #menu_content ul li {
+        float: left;
+        display: block;
+    }
+
+    #menu_content ul li a {
+        list-style: none;
+        text-decoration: none;
+        color: #f9fcfd;
+    }
+
+    #menu_homepage {
+        width: 100px;
+    }
+
+    #menu_match,
+    #menu_search,
+    #menu_personal,
+    #menu_rate,
+    #menu_course {
+        width: 75px;
+        text-align: center;
+    }
+
+    #middle {
+        width: 100%;
+        height: 300px;
+        text-align: center;
+        position: relative;
+        background: linear-gradient(to bottom, #fafcfd, #e5f2f8);
+    }
+
+    #middle_content {
+        width: 1024px;
+        height: 300px;
+        background: linear-gradient(to bottom, #fafcfd, #e5f2f8);
+        position: absolute;
+        left: 0;
+        right: 0;
+        margin: auto;
+
+    }
+
+    #intro {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 30px;
+        font-size: 26px;
+        color: #393939;
+    }
+
+    #search {
+        height: 56px;
+        width: 804px;
+        background-color: white;
+        position: absolute;
+        top: 170px;
+        left: 0;
+        right: 0;
+        margin: auto;
+    }
+
+    #search_box {
+        height: 52px;
+        width: 600px;
+        font-size: 20px;
+        border: none;
+        position: absolute;
+        padding-left: 10px;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        border: 1px solid #b2b2b2;
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+    }
+
+    #search_button {
+        width: 192px;
+        height: 56px;
+        font-size: 20px;
+        border-radius: 5px;
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        color: #393939;
+        border: 1px solid #b2b2b2;
+        border-top-left-radius: 0px;
+        border-bottom-left-radius: 0px;
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+    }
+
+    #main_pic {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+    }
+
+
+    #result {
+        width: 100%;
+        /* height: 700px; */
+        margin-top: -15px;
+        background: linear-gradient(to top, #fafcfd, #e5f2f8);
+    }
+
+    #course_list {
+        margin-top: 20px;
+        width: 725px;
+        height: 600px;
+        left: 0;
+        right: 0;
+        margin: auto;
+    }
+
+    #course_table {
+        width: 725px;
+        height: 600px;
+        margin-top: 15px;
+    }
+
+    #course_table tr {
+        display: block;
+        height: 60px;
+        width: 725px;
+        margin-top: 15px;
+    }
+
+    #course_table tr td {
+        display: block;
+        float: left;
+        text-align: center;
+    }
+
+    #course_table_title {
+        display: block;
+        width: 150px;
+        height: 60x;
+        line-height: 60px;
+    }
+
+    #course_table_tutorName {
+        display: block;
+        width: 120px;
+        height: 60px;
+        margin-left: 15px;
+        line-height: 60px;
+    }
+
+    #course_table_tutorName {
+        margin-right: 25px;
+    }
+
+    #course_table_date {
+        padding-top: 10px;
+        margin-right: 20px;
+    }
+
+    #course_table_date,
+    #course_table_date div {
+        display: block;
+        width: 200px;
+        height: 60px;
+        line-height: 60px;
+    }
+
+    #course_start_time {
+        margin-top: 5px;
+    }
+
+    #course_end_time {
+        margin-top: 0;
+    }
+
+    #course_start_time,
+    #course_end_time {
+        display: block;
+        width: 200px;
+        height: 0px;
+        margin-left: 8px;
+        line-height: 20px;
+        float: left;
+    }
+
+    #course_table_cancel {
+        display: block;
+        width: 160px;
+        height: 60px;
+        float: left;
+        line-height: 60px;
+        margin-left: 12px;
+    }
+
+    #course_table_cancel input {
+        width: 75px;
+        height: 24px;
+        display: block;
+        font-size: 13px;
+        margin-top: 20px;
+        border-radius: 5px;
+        float: left;
+        border: 1px solid #b2b2b2;
+    }
+
+    #course_page {
+        display: block;
+        width: 725px;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    #page_box {
+        width: 725px;
+        height: 30px;
+        margin-top: 45px;
+    }
+
+    #page {
+        width: 125px;
+        height: 30px;
+        display: block;
+        left: 0;
+        right: 0;
+        margin: auto;
+    }
+
+    #page input {
+        width: 15px;
+        height: 8px;
+        padding-top: -5px;
+        font-size: 16px;
+    }
+
+    #cur {
+        font-size: 15px;
+        display: inline;
+        margin-left: 0px;
+        font-weight: bold;
+    }
+</style>
+
+<body>
+
+    <div id="top">
+        <div id="top_content">
+            <ul>
+                <li id="signup"><a href="signup.html">Sign Up</a></li>
+                <li id="top1"> / </li>
+                <li id="login"><a href="login.html">Log In</a></li>
+                <li id="top2"> / </li>
+                <li id="user">Welcome, &nbsp;&nbsp;<a href="personal.html" id="username"></a></li>
+                <li id="top3"> / </li>
+                <li id="signout" onclick="signout()">Sign Out</li>
+            </ul>
+        </div>
+    </div>
+    <div id="menu">
+        <div id="menu_content">
+            <ul>
+                <li id="menu_homepage"><a href="main.html">Homepage</a></li>
+                <li id="menu_match"><a href="match.html">Match</a></li>
+                <li id="menu_search"><a href="search.html">Search</a></li>
+                <li id="menu_rate"><a href="rate.html">Rate</a></li>
+                <li id="menu_course"><a href="index.html">Course</a></li>
+                <li id="menu_personal"><a href="personal.html">Personal</a></li>
+            </ul>
+        </div>
+    </div>
+    <div id="middle">
+        <div id="middle_content">
+            <div id="intro">
+                <p style="font-size:26px;">Award-Winning Tutors over the World</p>
+                <p style="font-size:16px;">Learn from the best tutors ever. Cultivate more interests to live a wonderful
+                    life!</p>
+            </div>
+            <div id="search">
+                <input id="search_box" type="text" />
+                <button id="search_button">Search</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="result">
+        <div id="course_list">
+            <form>
+                <table id="course_table">
+                    <tr>
+                        <td id="course_table_title">Course Title</td>
+                        <td id="course_table_tutorName">Tutor</td>
+                        <td id="course_table_date">
+                            <div>
+                                <p id="course_start_time">Start From</p>
+                                <p id="course_end_time">End at</p>
+                            </div>
+                        </td>
+                        <td id="course_table_cancel">Process</td>
+                    </tr>
+                    <tr>
+                        <td id="course_table_title">Title</td>
+                        <td id="course_table_tutorName">Tutor Name</td>
+                        <td id="course_table_date">
+                            <div>
+                                <p id="course_start_time">2019-02-02 09:21 A.M.</p>
+                                <p id="course_end_time">2019-02-02 09:30 A.M.</p>
+                            </div>
+                        </td>
+                        <td id="course_table_cancel">
+                            <input type="button" value="Detail" style="margin-right:5px;">
+                            <input type="button" value="Choose" style="margin-left:5px;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="course_table_title">Title</td>
+                        <td id="course_table_tutorName">Tutor Name</td>
+                        <td id="course_table_date">
+                            <div>
+                                <p id="course_start_time">2019-02-02 09:21 A.M.</p>
+                                <p id="course_end_time">2019-02-02 09:30 A.M.</p>
+                            </div>
+                        </td>
+                        <td id="course_table_cancel">
+                            <input type="button" value="Detail" style="margin-right:5px;">
+                            <input type="button" value="Choose" style="margin-left:5px;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="course_table_title">Title</td>
+                        <td id="course_table_tutorName">Tutor Name</td>
+                        <td id="course_table_date">
+                            <div>
+                                <p id="course_start_time">2019-02-02 09:21 A.M.</p>
+                                <p id="course_end_time">2019-02-02 09:30 A.M.</p>
+                            </div>
+                        </td>
+                        <td id="course_table_cancel">
+                            <input type="button" value="Detail" style="margin-right:5px;">
+                            <input type="button" value="Choose" style="margin-left:5px;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="course_page" colspan="4">
+                            <div id="page_box">
+                                <div id="page">
+                                    <input onclick="prev(2)" value="↢">
+                                    &nbsp;&nbsp;<div id="cur">3</div>&nbsp;&nbsp;/&nbsp;&nbsp;<div
+                                        style="font-size:15px;font-weight:bold;display:inline;margin-left:0px;"
+                                        id="all">all</div>&nbsp;&nbsp;
+                                    <input onclick="next(2)" value="↣">
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+
+</body>
+
+</html>

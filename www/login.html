@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Hobby-ever</title>
+    <script src="https://cdn.firebase.com/libs/firebaseui/3.1.1/firebaseui.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.1.1/firebaseui.css" />
+</head>
+<style>
+    #whole {
+        height: 800px;
+        width: 100%;
+        position: relative;
+        background-color: #fcfcfc;
+    }
+
+    #center {
+        width: 100%;
+        height: 600px;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto 0;
+        position: absolute;
+    }
+
+    #title {
+        color: white;
+        text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px #e3fafb;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        margin-left: 18px;
+        margin-top: 58px;
+        float: left;
+        height: 45px;
+        display: block;
+    }
+
+    #left {
+        width: 50%;
+        height: 600px;
+        float: left;
+        /* text-align:center; */
+        position: relative;
+    }
+
+    #left_content {
+        width: 480px;
+        height: 350px;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        margin: auto;
+        position: absolute;
+    }
+
+    #slogan {
+        margin: 1px;
+        display: block;
+        height: 20px;
+        font-size: 20px;
+        color: dimgray;
+    }
+
+    #left_top {
+        width: 400px;
+        height: 150px;
+        overflow: hidden;
+        left: 0;
+        right: 0;
+        margin: auto;
+    }
+
+    #left_bottom {
+        width: 450px;
+        height: 50px;
+        font-size: 24px;
+        margin-top: 30px;
+        text-align: center;
+    }
+
+    #right {
+        width: 50%;
+        height: 600px;
+        text-align: center;
+        float: left;
+        position: relative;
+    }
+
+    #right_content {
+        position: absolute;
+        text-align: center;
+        width: 420px;
+        height: 550px;
+        top: 0;
+        bottom: 0;
+        left: 110px;
+        margin: auto;
+        background-color: bisque;
+    }
+
+    #username_input {
+        width: 300px;
+        height: 45px;
+        border-radius: 3px;
+        border: 1px solid #b2b2b2;
+        vertical-align: middle;
+        background-color: #ffffff;
+        left: 0;
+        right: 0;
+        margin: auto;
+    }
+
+    form.card {
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    }
+</style>
+
+<body id="whole">
+
+    <div id="center">
+        <div id="left">
+            <div id="left_content">
+                <a href="main.html">
+                    <div id="left_top">
+                        <img src="img/logo2.png" style="float:left;">
+                        <h1 id="title">Hobby-ever</h1>
+                    </div>
+                </a>
+                <div id="left_bottom">
+                    <p id="slogan">This is a wonderful life!</p>
+                </div>
+            </div>
+        </div>
+        <div id="right" style="text-align:center;">
+            <form id="right_content" class="card">
+                <table style="width:420px; margin-top: 25px">
+                    <tr style="margin-top: 20px; display: block;">
+                        <th style="width:420px; display:block; font-size: 18px">Sign in to your account</th>
+                    </tr>
+                    <tr style="margin-top: 10px; display: block;">
+                        <td style="width:420px; height:45px; display: block; text-align: center;">
+                            <div id="username_input">
+                                <img src="img/login_user.png" style="margin-top:8px; margin-left: 6px; float: left">
+                                <input id="username" type="text"
+                                    style=" height: 30px; width: 255px;margin-top: 7px; font-size: 14px; border: none;"
+                                    placeholder="Please input your username">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr style="margin-top: 3px; display: block;">
+                        <!-- 提示用户名出错 选中后再移开则出现 -->
+                        <td>&nbsp;</td>
+                    </tr>
+                    <tr style="margin-top: 10px; display: block; text-align: center;">
+                        <td style="width:420px; height:45px; display: block;">
+                            <div
+                                style="width:300px; height:45px; border-radius: 3px; border: 1px solid #b2b2b2; vertical-align: middle; left: 0; right: 0;margin: auto; background-color: #ffffff">
+                                <img src="img/login_psw.png" style="margin-top:10px; margin-left: 6px; float: left">
+                                <input id="password" type="password"
+                                    style=" height: 30px; width: 255px;margin-top: 7px; font-size: 14px; border: none;"
+                                    placeholder="Password">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr style="margin-top: 3px; display: block;">
+                        <!-- 提示密码出错 选中后再移开则出现 -->
+                        <td>&nbsp;</td>
+                    </tr>
+                    </tr>
+                    <tr style="margin-top: 10px; display: block;">
+                        <td style="width:420px; height:45px; display: block;">
+                            <input type="button"
+                                style="width:300px; height:45px; font-size: 18px; background-color:lightgreen; border: none; left: 0; right: 0;margin: auto;"
+                                onclick="loginUser()" value="Log In">
+                        </td>
+                    </tr>
+                    <tr style="display: block; height: 20px;">
+                        <td style="width:420px; display: block; margin-left: -18px">
+                            <p style="width:200px; margin-left: 65px; margin-top: 5px;"><a href="signup.html"
+                                    style="font-size: 13px;color:rgb(116,116,116); text-decoration: none; height: 20px; display: block;margin-top: 0;">New
+                                    user? Click here to register.</a></p>
+                        </td>
+                    </tr>
+                    <tr style="margin-top:80px;display: block">
+                        <td>
+                            <div
+                                style="width:380px; height:1px; margin-top: 50px; margin-left:17px; background-color: #b2b2b2">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width:420px; margin-top:20px; display: block; ">
+                            <div style=" left: 0; right: 0;margin: auto;">
+                                <img src="img/login_google.png" width="50px" height="50px">
+                                <img src="img/login_facebook.png" width="50px" height="50px" style="margin-left:50px">
+                                <img src="img/login_twitter.jpg" width="50px" height="50px" style="margin-left:50px">
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+
+
+</body>
+
+
+<script src="https://www.gstatic.com/firebasejs/5.8.5/firebase.js"></script>
+<script>
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyCZ59-0Z7syxxHyDbV1O8I1B8Uxq6swBV0",
+        authDomain: "cs179-final.firebaseapp.com",
+        databaseURL: "https://cs179-final.firebaseio.com",
+        projectId: "cs179-final",
+        storageBucket: "cs179-final.appspot.com",
+        messagingSenderId: "863057579113"
+    };
+    firebase.initializeApp(config);
+</script>
+
+<script type="text/javascript">
+
+    function loginUser() {
+        var email = document.getElementById('username').value;
+        var password = document.getElementById('password').value;
+
+        if (firebase.auth().currentUser) {
+            // [START signout]
+            firebase.auth().signOut();
+            // [END signout]
+        }
+        else {
+            firebase.auth().signInWithEmailAndPassword(email, password).catch(function (error) {
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                alert(errorMessage);
+                // ...
+            });
+        }
+    }
+
+    firebase.auth().onAuthStateChanged(function (user) {
+        if (user) {
+            // User is signed in.
+            alert("success");
+            window.location.href = "main.html";
+            // ...
+        } else {
+            // User is signed out.
+            // alert(" signed out");
+        }
+    });
+
+</script>
+
+</html>
