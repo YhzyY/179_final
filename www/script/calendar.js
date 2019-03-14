@@ -229,9 +229,6 @@ function addAnEvent(event_id, event_name, start_time, end_time) {
     event_table_tr.appendChild(event_table_start_date);
     event_table_start_date.id = "event_start_date";
     event_table_start_date.innerHTML = start_time;
-    event_table_start_date.onclick = function () {
-      goTutorPage(event_tutor_id);
-    }
 
     //event_connect
     var event_connect = document.createElement("td");
@@ -244,9 +241,6 @@ function addAnEvent(event_id, event_name, start_time, end_time) {
     event_table_tr.appendChild(event_end_date);
     event_end_date.id = "event_end_date";
     event_end_date.innerHTML = end_time;
-    event_end_date.onclick = function () {
-      goTutorPage(event_tutor_id);
-    }
 
     //event_button
     var event_button = document.createElement("td");
