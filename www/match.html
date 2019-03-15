@@ -19,17 +19,21 @@
         messagingSenderId: "863057579113"
     };
     firebase.initializeApp(config);
+    var firestore = firebase.firestore();
 </script>
 
 <script type="text/javascript">
-    var firestore = firebase.firestore();
     window.onload = function () {
         firebase.auth().onAuthStateChanged(function (user) {
             if (user) {
-                var uid = user.uid;
-                var email, credit, gender, username, phone, interests, skills, rate;
-                const usersRef = firestore.doc("users/" + uid);
-                const courseRef = firestore.doc("course/1");
+                var email = user.email;
+                var gender = user.gender;
+                var username = user.username;
+                var phone = user.phone;
+                var interests = user.interests;
+                var skills = user.skills;
+
+
 
                 document.getElementById('signup').style.display = 'none';
                 document.getElementById('login').style.display = 'none';
@@ -39,37 +43,15 @@
                 document.getElementById('top3').style.display = 'block';
                 document.getElementById('signout').style.display = 'block';
 
-                usersRef.get().then(function (doc) {
-                    if (doc && doc.exists) { 
-                        const curData = doc.data();
-                        user.email = curData.email;
-                        user.credit = curData.credit;
-                        user.gender = curData.gender;
-                        user.username = curData.username;
-                        user.phone = curData.phone;
-                        user.interests = curData.interests;
-                        user.skills = curData.skills;
-                        user.rate = curData.rate;
-                        user.rate_amount = curData.rate_amount;
-
-                        loadPage(user);
-                    }
-                }).catch(function (error) {
-                    alert("Got an error: " + error);
-                });
-
+                if (username) {
+                    document.getElementById('username').textContent = username;
+                }
+                else if (email) {
+                    document.getElementById('username').textContent = email;
+                }
             }
         });
     };
-
-    function loadPage(user) {
-        if (user.username) {
-            document.getElementById('username').textContent = user.username;
-        }
-        else if (user.email) {
-            document.getElementById('username').textContent = user.email;
-        }
-    }
     function signout() {
 
         firebase.auth().signOut().then(function () {
@@ -80,6 +62,76 @@
             alert(error);
         });
 
+    }
+    function findMatch()
+    {
+        //find the value
+        var num = 1
+        // acquire the data from the users
+        firebase.auth().onAuthStateChanged(function (user) {
+            if (user) 
+            {
+                var uid = user.uid;
+                
+            
+         const usersRef = firestore.doc("users/" + uid);
+         usersRef.get().then(function (doc)
+                {
+                    if (doc && doc.exists) 
+                    {
+                        const curData = doc.data();
+                        user.interests = curData.interests;
+                        var interests = curData.interests;
+                        firestore.collection("users").get().then(function(querySnapshot) {
+            querySnapshot.forEach(function(doc) 
+           {
+            var skills = doc.data().skills;
+            var doc_id = doc.id;
+            var doc_data = doc.data();
+            //when interest is array
+            if(skills instanceof Array)
+            {
+                 for(var i=0;i<skills.length;i++)
+                 {
+                     for(var j=0;j<interests.length;j++)
+                     {
+                        if(skills[i]==interests[j])
+                        {
+                         var skill = "skill_" +num;
+                         document.getElementById(skill).textContent = doc_data.interests;
+                         var skill_display = document.getElementById(skill);
+                         skill_display.style.display = 'block';
+                         var user = "user_" +num
+                         document.getElementById(user).textContent = doc_data.username;
+                         var user_display = document.getElementById(user);
+                         user_display.style.display = 'block';
+                         var phone = "phone_"+num
+                         document.getElementById(phone).textContent = doc_data.phone;
+                         var phone_display = document.getElementById(phone);
+                         phone_display.style.display = 'block';
+                         var credit = "credit_"+num
+                         document.getElementById(credit).textContent = doc_data.credit;
+                         var credit_display = document.getElementById(credit);
+                         credit_display.style.display = 'block';
+                        }
+                     }
+                 }
+            }
+        })
+                });
+                    }
+                }).catch(function (error) {
+                    alert("Got an error: " + error);
+                });
+                
+               
+
+
+
+
+
+            }
+         })
     }
 </script>
 <style>
@@ -327,30 +379,47 @@
         text-align: center;
     }
 
-    #course_table_title {
+    .user{
         display: block;
         width: 150px;
-        height: 60x;
-        line-height: 60px;
+        height: 100px;
+        margin-left: 8px;
+        line-height: 20px;
+        float: left;
     }
 
-    #course_table_tutorName {
+    .interest {
         display: block;
-        width: 120px;
-        height: 60px;
-        margin-left: 15px;
-        line-height: 60px;
+        width: 150px;
+        height: 100px;
+        margin-left: 8px;
+        line-height: 20px;
+        float: left;
     }
 
     #course_table_tutorName {
         margin-right: 25px;
     }
 
-    #course_table_date {
-        padding-top: 10px;
-        margin-right: 20px;
+    .phone {
+        display: block;
+        width: 150px;
+        height: 100px;
+        margin-left: 8px;
+        line-height: 20px;
+        float: left;
+    }
+    
+    .credit{
+        display: block;
+        width: 150px;
+        height: 100px;
+        margin-left: 8px;
+        line-height: 20px;
+        float: left;
     }
 
+    }
     #course_table_date,
     #course_table_date div {
         display: block;
@@ -456,7 +525,7 @@
                 <li id="menu_match"><a href="match.html">Match</a></li>
                 <li id="menu_search"><a href="search.html">Search</a></li>
                 <li id="menu_rate"><a href="rate.html">Rate</a></li>
-                <li id="menu_course"><a href="index.html">Course</a></li>
+                <li id="menu_course"><a href="course.html">Course</a></li>
                 <li id="menu_personal"><a href="personal.html">Personal</a></li>
             </ul>
         </div>
@@ -470,7 +539,7 @@
             </div>
             <div id="search">
                 <input id="search_box" type="text" />
-                <button id="search_button">Search</button>
+                <button id="search_button" onclick="findMatch()">Match</button>
             </div>
         </div>
     </div>
@@ -479,58 +548,42 @@
     <div id="result">
         <div id="course_list">
             <form>
-                <table id="course_table">
+                <table id="course_table" >
                     <tr>
-                        <td id="course_table_title">Course Title</td>
-                        <td id="course_table_tutorName">Tutor</td>
-                        <td id="course_table_date">
-                            <div>
-                                <p id="course_start_time">Start From</p>
-                                <p id="course_end_time">End at</p>
-                            </div>
-                        </td>
-                        <td id="course_table_cancel">Process</td>
+                        <td class="user">Username</td>
+                        <td class="interest">Interest</td>
+                        <td     class="phone">Phone</td>
+                        <td  class="credit">Credit</td>
+                        
                     </tr>
                     <tr>
-                        <td id="course_table_title">Title</td>
-                        <td id="course_table_tutorName">Tutor Name</td>
-                        <td id="course_table_date">
-                            <div>
-                                <p id="course_start_time">2019-02-02 09:21 A.M.</p>
-                                <p id="course_end_time">2019-02-02 09:30 A.M.</p>
-                            </div>
-                        </td>
-                        <td id="course_table_cancel">
-                            <input type="button" value="Detail" style="margin-right:5px;">
-                            <input type="button" value="Choose" style="margin-left:5px;">
+                        <td  class="user" ><p id="user_1" style="display:none">Title</p></td>
+                        <td  class="interest"><p id="skill_1" style="display:none">Tutor Name</p></td>
+                        <td  class="phone"><p id="phone_1" style="display:none">phone</p></td>
+                        <td  class="credit"><p id="credit_1" style="display:none">credit</p></td>
+                        <td  class="course_table_cancel">
+                            <input id="detail_1" type="button" value="Detail" style="margin-left:5px;display:none;">
+                            <input id="choose_1" type="button" value="Choose" style="margin-left:5px;display:none;">
                         </td>
                     </tr>
                     <tr>
-                        <td id="course_table_title">Title</td>
-                        <td id="course_table_tutorName">Tutor Name</td>
-                        <td id="course_table_date">
-                            <div>
-                                <p id="course_start_time">2019-02-02 09:21 A.M.</p>
-                                <p id="course_end_time">2019-02-02 09:30 A.M.</p>
-                            </div>
-                        </td>
-                        <td id="course_table_cancel">
-                            <input type="button" value="Detail" style="margin-right:5px;">
-                            <input type="button" value="Choose" style="margin-left:5px;">
+                        <td  class="user" ><p id="user_2" style="display:none">Title</p></td>
+                        <td  class="interest"><p id="skill_2" style="display:none">Tutor Name</p></td>
+                        <td  class="phone"><p id="phone_2" style="display:none">phone</p></td>
+                        <td  class="credit"><p id="credit_2" style="display:none">credit</p></td>
+                        <td  class="course_table_cancel">
+                            <input id="detail_2" type="button" value="Detail" style="margin-left:5px;display:none;">
+                            <input id="choose_2" type="button" value="Choose" style="margin-left:5px;display:none;">
                         </td>
                     </tr>
                     <tr>
-                        <td id="course_table_title">Title</td>
-                        <td id="course_table_tutorName">Tutor Name</td>
-                        <td id="course_table_date">
-                            <div>
-                                <p id="course_start_time">2019-02-02 09:21 A.M.</p>
-                                <p id="course_end_time">2019-02-02 09:30 A.M.</p>
-                            </div>
-                        </td>
-                        <td id="course_table_cancel">
-                            <input type="button" value="Detail" style="margin-right:5px;">
-                            <input type="button" value="Choose" style="margin-left:5px;">
+                        <td  class="user" ><p id="user_3" style="display:none">Title</p></td>
+                        <td  class="interest"><p id="skill_3" style="display:none">Tutor Name</p></td>
+                        <td  class="phone"><p id="phone_3" style="display:none">phone</p></td>
+                        <td  class="credit"><p id="credit_3" style="display:none">credit</p></td>
+                        <td  class="course_table_cancel">
+                            <input id="detail_3" type="button" value="Detail" style="margin-left:5px;display:none;">
+                            <input id="choose_3" type="button" value="Choose" style="margin-left:5px;display:none;">
                         </td>
                     </tr>
                     <tr>
